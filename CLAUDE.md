@@ -1,7 +1,7 @@
 # lex-openai: OpenAI Integration for LegionIO
 
 **Repository Level 3 Documentation**
-- **Category**: `/Users/miverso2/rubymine/legion/extensions/CLAUDE.md`
+- **Category**: `/Users/miverso2/rubymine/legion/extensions-ai/CLAUDE.md`
 
 ## Purpose
 
@@ -15,16 +15,18 @@ Legion Extension that connects LegionIO to OpenAI. Provides runners for chat com
 ```
 Legion::Extensions::Openai
 ├── Runners/
-│   ├── Chat               # Chat completions (GPT models)
+│   ├── Chat               # Chat completions (create)
 │   ├── Models             # List, retrieve, delete models
-│   ├── Images             # Generate, edit, create variations (DALL-E)
-│   ├── Audio              # Speech synthesis, transcription, translation (Whisper/TTS)
-│   ├── Embeddings         # Vector embeddings
-│   ├── Files              # File upload, list, retrieve, delete, download
-│   └── Moderations        # Content moderation/classification
+│   ├── Images             # Generate (DALL-E 3), edit, variation (DALL-E 2)
+│   ├── Audio              # Speech/TTS (speech), transcription (transcribe), translation (translate)
+│   ├── Embeddings         # Vector embeddings (create)
+│   ├── Files              # list, upload, retrieve, delete, content (download)
+│   └── Moderations        # Content classification (create)
 └── Helpers/
-    └── Client             # OpenAI API client (Faraday-based, Bearer auth)
+    └── Client             # OpenAI API client (module, Faraday factory, Bearer auth)
 ```
+
+`Helpers::Client` is a **module** with a `client(api_key:, ...)` factory method. All runner modules `extend` it, making `client(...)` available as a module-level method. Multipart middleware (`:multipart`) is always loaded, enabling `Faraday::Multipart::FilePart` usage in Images, Audio, and Files runners.
 
 ## Dependencies
 

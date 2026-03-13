@@ -41,10 +41,39 @@ gem install lex-openai
 ### Moderations
 - `create` - Classify content for policy compliance
 
+## Standalone Usage
+
+```ruby
+require 'legion/extensions/openai/runners/chat'
+require 'legion/extensions/openai/runners/images'
+
+module MyApp
+  extend Legion::Extensions::Openai::Runners::Chat
+
+  API_KEY = ENV['OPENAI_API_KEY']
+end
+
+# Chat completion
+result = MyApp.create(
+  model: 'gpt-4o',
+  messages: [{ role: 'user', content: 'Hello!' }],
+  api_key: MyApp::API_KEY
+)
+puts result[:result]['choices'].first['message']['content']
+
+# Image generation
+image = MyApp.extend(Legion::Extensions::Openai::Runners::Images).generate(
+  prompt: 'A futuristic city at sunset',
+  model: 'dall-e-3',
+  api_key: MyApp::API_KEY
+)
+puts image[:result]['data'].first['url']
+```
+
 ## Requirements
 
 - Ruby >= 3.4
-- [LegionIO](https://github.com/LegionIO/LegionIO) framework
+- [LegionIO](https://github.com/LegionIO/LegionIO) framework (optional for standalone runner usage)
 - OpenAI API key
 
 ## License
