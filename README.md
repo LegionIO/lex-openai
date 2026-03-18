@@ -8,6 +8,12 @@ OpenAI integration for [LegionIO](https://github.com/LegionIO/LegionIO). Provide
 gem install lex-openai
 ```
 
+Or add to your Gemfile:
+
+```ruby
+gem 'lex-openai'
+```
+
 ## Functions
 
 ### Chat
@@ -19,14 +25,14 @@ gem install lex-openai
 - `delete` - Delete a fine-tuned model
 
 ### Images
-- `generate` - Generate images from text prompts
-- `edit` - Edit images with text prompts and masks
-- `variation` - Create variations of an image
+- `generate` - Generate images from text prompts (DALL-E 3 default)
+- `edit` - Edit images with text prompts and masks (DALL-E 2)
+- `variation` - Create variations of an image (DALL-E 2)
 
 ### Audio
-- `speech` - Generate speech from text (TTS)
-- `transcribe` - Transcribe audio to text
-- `translate` - Translate audio to English text
+- `speech` - Generate speech from text (TTS, default model: tts-1)
+- `transcribe` - Transcribe audio to text (Whisper)
+- `translate` - Translate audio to English text (Whisper)
 
 ### Embeddings
 - `create` - Generate vector embeddings
@@ -41,34 +47,56 @@ gem install lex-openai
 ### Moderations
 - `create` - Classify content for policy compliance
 
+## Configuration
+
+Set your API key in your LegionIO settings:
+
+```json
+{
+  "openai": {
+    "api_key": "sk-..."
+  }
+}
+```
+
 ## Standalone Usage
+
+Runner modules can be extended directly onto any module or object. Each runner method requires `api_key:` as a keyword argument.
 
 ```ruby
 require 'legion/extensions/openai/runners/chat'
 require 'legion/extensions/openai/runners/images'
 
-module MyApp
+# Chat completion
+module ChatClient
   extend Legion::Extensions::Openai::Runners::Chat
-
-  API_KEY = ENV['OPENAI_API_KEY']
 end
 
-# Chat completion
-result = MyApp.create(
+result = ChatClient.create(
   model: 'gpt-4o',
   messages: [{ role: 'user', content: 'Hello!' }],
-  api_key: MyApp::API_KEY
+  api_key: ENV['OPENAI_API_KEY']
 )
 puts result[:result]['choices'].first['message']['content']
 
 # Image generation
-image = MyApp.extend(Legion::Extensions::Openai::Runners::Images).generate(
+module ImageClient
+  extend Legion::Extensions::Openai::Runners::Images
+end
+
+image = ImageClient.generate(
   prompt: 'A futuristic city at sunset',
   model: 'dall-e-3',
-  api_key: MyApp::API_KEY
+  api_key: ENV['OPENAI_API_KEY']
 )
 puts image[:result]['data'].first['url']
 ```
+
+## Dependencies
+
+- `faraday` >= 2.0 - HTTP client
+- `faraday-multipart` >= 1.0 - Multipart file uploads (images, audio, files)
+- `multi_json` - JSON parser abstraction
 
 ## Requirements
 
