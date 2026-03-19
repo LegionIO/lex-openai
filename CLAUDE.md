@@ -10,7 +10,7 @@ Legion Extension that connects LegionIO to OpenAI. Provides runners for chat com
 
 **GitHub**: https://github.com/LegionIO/lex-openai
 **License**: MIT
-**Version**: 0.1.0
+**Version**: 0.1.1
 **Specs**: 17 examples
 
 ## Architecture
@@ -22,7 +22,7 @@ Legion::Extensions::Openai
 │   ├── Models             # list(api_key:, ...), retrieve(api_key:, model_id:, ...), delete(api_key:, model_id:, ...)
 │   ├── Images             # generate(prompt:, api_key:, model: 'dall-e-3', ...), edit(...), variation(...)
 │   ├── Audio              # speech(input:, api_key:, model: 'tts-1', voice: 'alloy', ...), transcribe(...), translate(...)
-│   ├── Embeddings         # create(input:, model:, api_key:, ...)
+│   ├── Embeddings         # create(input:, model: 'text-embedding-3-small', api_key:, ...)
 │   ├── Files              # list, upload, retrieve, delete, content (download)
 │   └── Moderations        # create(input:, api_key:, ...)
 └── Helpers/

@@ -35,7 +35,7 @@ gem 'lex-openai'
 - `translate` - Translate audio to English text (Whisper)
 
 ### Embeddings
-- `create` - Generate vector embeddings
+- `create` - Generate vector embeddings (default model: text-embedding-3-small)
 
 ### Files
 - `list` - List uploaded files
