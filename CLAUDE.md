@@ -19,7 +19,7 @@ Legion Extension that connects LegionIO to OpenAI. Provides runners for chat com
 Legion::Extensions::Openai
 ├── Runners/
 │   ├── Chat               # create(model:, messages:, api_key:, ...)
-│   ├── Models             # list(api_key:, ...), retrieve(api_key:, model_id:, ...), delete(api_key:, model_id:, ...)
+│   ├── Models             # list(api_key:, ...), retrieve(model:, api_key:, ...), delete(model:, api_key:, ...)
 │   ├── Images             # generate(prompt:, api_key:, model: 'dall-e-3', ...), edit(...), variation(...)
 │   ├── Audio              # speech(input:, api_key:, model: 'tts-1', voice: 'alloy', ...), transcribe(...), translate(...)
 │   ├── Embeddings         # create(input:, model: 'text-embedding-3-small', api_key:, ...)
@@ -37,7 +37,7 @@ Legion::Extensions::Openai
 - Images (edit, variation) and Audio (transcribe, translate) runners use `Faraday::Multipart::FilePart` directly.
 - `Images#generate` uses DALL-E 3 by default; `Images#edit` and `Images#variation` use DALL-E 2 by default.
 - Audio defaults: `model: 'tts-1'`, `voice: 'alloy'`, `response_format: 'mp3'` for speech; `model: 'whisper-1'` for transcription/translation.
-- Chat runner returns `{ result: response.body }` (no `:status` key) — differs slightly from claude/gemini runner return shapes.
+- All runners return `{ result: response.body }` (no `:status` key). This is consistent with lex-gemini runners. lex-claude runners add `:status` to the return hash.
 - `include Legion::Extensions::Helpers::Lex` is guarded with `Legion::Extensions.const_defined?(:Helpers)` pattern.
 
 ## Dependencies
