@@ -1,6 +1,10 @@
 # lex-openai
 
-OpenAI integration for [LegionIO](https://github.com/LegionIO/LegionIO). Provides runners for chat completions, image generation, audio processing, embeddings, file management, and content moderation via the OpenAI API.
+OpenAI integration for LegionIO. Provides runners for chat completions, image generation, audio processing, embeddings, file management, and content moderation via the OpenAI API.
+
+## Purpose
+
+Wraps the OpenAI REST API as named runners consumable by any LegionIO task chain. Includes resource-specific operations (image generation/editing, audio transcription/synthesis, file management, moderation) not available through the `legion-llm` unified interface. Use this extension when you need direct access to the full OpenAI API surface within the LEX runner/actor lifecycle.
 
 ## Installation
 
@@ -103,6 +107,12 @@ puts image[:result]['data'].first['url']
 - Ruby >= 3.4
 - [LegionIO](https://github.com/LegionIO/LegionIO) framework (optional for standalone runner usage)
 - OpenAI API key
+
+## Related
+
+- `lex-xai` — xAI Grok API (same structural pattern as lex-openai)
+- `legion-llm` — High-level LLM interface including OpenAI via ruby_llm
+- `extensions-ai/CLAUDE.md` — Architecture patterns shared across all AI extensions
 
 ## License
 
