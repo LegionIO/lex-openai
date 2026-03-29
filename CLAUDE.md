@@ -10,7 +10,7 @@ Legion Extension that connects LegionIO to OpenAI. Provides runners for chat com
 
 **GitHub**: https://github.com/LegionIO/lex-openai
 **License**: MIT
-**Version**: 0.1.1
+**Version**: 0.1.2
 **Specs**: 17 examples
 
 ## Architecture
@@ -29,6 +29,8 @@ Legion::Extensions::Openai
     └── Client             # OpenAI API client (module, Faraday factory, Bearer auth)
 ```
 
+There is no standalone `Client` class in lex-openai. Runner modules are used directly via `extend` or by including them in a consuming class. This differs from lex-azure-ai, lex-bedrock, lex-claude, lex-foundry, and lex-xai which all ship a `Client` class.
+
 `Helpers::Client` is a **module** (not a class). It does not use `module_function` — instead, runner modules `extend` it so `client(...)` is available as a module-level method. `DEFAULT_BASE_URL` is `'https://api.openai.com'`.
 
 ## Key Design Decisions
@@ -46,7 +48,8 @@ Legion::Extensions::Openai
 |-----|---------|
 | `faraday` >= 2.0 | HTTP client |
 | `faraday-multipart` >= 1.0 | Multipart file uploads (images, audio, files) |
-| `multi_json` | JSON parser abstraction |
+
+Note: `multi_json` is NOT a declared dependency of lex-openai (unlike the other extensions in this category). JSON parsing uses Faraday's built-in response middleware.
 
 ## Testing
 
