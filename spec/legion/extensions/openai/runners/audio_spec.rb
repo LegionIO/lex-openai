@@ -24,6 +24,27 @@ RSpec.describe Legion::Extensions::Openai::Runners::Audio do
       result = test_class.speech(input: 'Hello world', api_key: api_key)
       expect(result[:result]).to eq('binary-audio-data')
     end
+
+    it 'includes a usage key in the response' do
+      allow(conn).to receive(:post)
+        .and_return(instance_double(Faraday::Response, body: 'audio'))
+
+      result = test_class.speech(input: 'Hello world', api_key: api_key)
+      expect(result).to have_key(:usage)
+    end
+
+    it 'returns zero usage values' do
+      allow(conn).to receive(:post)
+        .and_return(instance_double(Faraday::Response, body: 'audio'))
+
+      result = test_class.speech(input: 'Hello world', api_key: api_key)
+      expect(result[:usage]).to eq(
+        input_tokens:       0,
+        output_tokens:      0,
+        cache_read_tokens:  0,
+        cache_write_tokens: 0
+      )
+    end
   end
 
   describe '#transcribe' do
@@ -35,6 +56,27 @@ RSpec.describe Legion::Extensions::Openai::Runners::Audio do
       result = test_class.transcribe(file: '/tmp/audio.mp3', api_key: api_key)
       expect(result[:result]['text']).to eq('Hello world')
     end
+
+    it 'includes a usage key in the response' do
+      allow(conn).to receive(:post).and_return(instance_double(Faraday::Response, body: { 'text' => 'hi' }))
+      allow(Faraday::Multipart::FilePart).to receive(:new).and_return('file-part')
+
+      result = test_class.transcribe(file: '/tmp/audio.mp3', api_key: api_key)
+      expect(result).to have_key(:usage)
+    end
+
+    it 'returns zero usage values' do
+      allow(conn).to receive(:post).and_return(instance_double(Faraday::Response, body: { 'text' => 'hi' }))
+      allow(Faraday::Multipart::FilePart).to receive(:new).and_return('file-part')
+
+      result = test_class.transcribe(file: '/tmp/audio.mp3', api_key: api_key)
+      expect(result[:usage]).to eq(
+        input_tokens:       0,
+        output_tokens:      0,
+        cache_read_tokens:  0,
+        cache_write_tokens: 0
+      )
+    end
   end
 
   describe '#translate' do
@@ -45,6 +87,27 @@ RSpec.describe Legion::Extensions::Openai::Runners::Audio do
 
       result = test_class.translate(file: '/tmp/audio.mp3', api_key: api_key)
       expect(result[:result]['text']).to eq('Translated text')
+    end
+
+    it 'includes a usage key in the response' do
+      allow(conn).to receive(:post).and_return(instance_double(Faraday::Response, body: { 'text' => 'hi' }))
+      allow(Faraday::Multipart::FilePart).to receive(:new).and_return('file-part')
+
+      result = test_class.translate(file: '/tmp/audio.mp3', api_key: api_key)
+      expect(result).to have_key(:usage)
+    end
+
+    it 'returns zero usage values' do
+      allow(conn).to receive(:post).and_return(instance_double(Faraday::Response, body: { 'text' => 'hi' }))
+      allow(Faraday::Multipart::FilePart).to receive(:new).and_return('file-part')
+
+      result = test_class.translate(file: '/tmp/audio.mp3', api_key: api_key)
+      expect(result[:usage]).to eq(
+        input_tokens:       0,
+        output_tokens:      0,
+        cache_read_tokens:  0,
+        cache_write_tokens: 0
+      )
     end
   end
 end

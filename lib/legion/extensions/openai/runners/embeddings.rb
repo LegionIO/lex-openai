@@ -15,7 +15,16 @@ module Legion
             body[:dimensions] = dimensions if dimensions
 
             response = client(api_key: api_key, **).post('/v1/embeddings', body)
-            { result: response.body }
+            resp_body = response.body
+            {
+              result: resp_body,
+              usage:  {
+                input_tokens:       resp_body.dig('usage', 'prompt_tokens') || 0,
+                output_tokens:      resp_body.dig('usage', 'completion_tokens') || 0,
+                cache_read_tokens:  resp_body.dig('usage', 'prompt_tokens_details', 'cached_tokens') || 0,
+                cache_write_tokens: 0
+              }
+            }
           end
 
           include Legion::Extensions::Helpers::Lex if Legion::Extensions.const_defined?(:Helpers, false) &&
