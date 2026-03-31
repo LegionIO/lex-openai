@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.1.4] - 2026-03-31
+
+### Added
+- add standardized usage tracking to all runner responses; all methods now return a `usage:` hash with `input_tokens`, `output_tokens`, `cache_read_tokens`, and `cache_write_tokens` keys compatible with legion-llm's CostEstimator (#2)
+
 ## [0.1.3] - 2026-03-30
 
 ### Changed

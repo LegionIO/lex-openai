@@ -14,7 +14,15 @@ module Legion
             body[:speed] = speed if speed
 
             response = client(api_key: api_key, **).post('/v1/audio/speech', body)
-            { result: response.body }
+            {
+              result: response.body,
+              usage:  {
+                input_tokens:       0,
+                output_tokens:      0,
+                cache_read_tokens:  0,
+                cache_write_tokens: 0
+              }
+            }
           end
 
           def transcribe(file:, api_key:, model: 'whisper-1', language: nil, prompt: nil, response_format: nil, **)
@@ -27,7 +35,15 @@ module Legion
             payload[:response_format] = response_format if response_format
 
             response = client(api_key: api_key, **).post('/v1/audio/transcriptions', payload)
-            { result: response.body }
+            {
+              result: response.body,
+              usage:  {
+                input_tokens:       0,
+                output_tokens:      0,
+                cache_read_tokens:  0,
+                cache_write_tokens: 0
+              }
+            }
           end
 
           def translate(file:, api_key:, model: 'whisper-1', prompt: nil, response_format: nil, **)
@@ -39,7 +55,15 @@ module Legion
             payload[:response_format] = response_format if response_format
 
             response = client(api_key: api_key, **).post('/v1/audio/translations', payload)
-            { result: response.body }
+            {
+              result: response.body,
+              usage:  {
+                input_tokens:       0,
+                output_tokens:      0,
+                cache_read_tokens:  0,
+                cache_write_tokens: 0
+              }
+            }
           end
 
           include Legion::Extensions::Helpers::Lex if Legion::Extensions.const_defined?(:Helpers, false) &&

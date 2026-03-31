@@ -17,7 +17,15 @@ module Legion
             body[:response_format] = response_format if response_format
 
             response = client(api_key: api_key, **).post('/v1/images/generations', body)
-            { result: response.body }
+            {
+              result: response.body,
+              usage:  {
+                input_tokens:       0,
+                output_tokens:      0,
+                cache_read_tokens:  0,
+                cache_write_tokens: 0
+              }
+            }
           end
 
           def edit(image:, prompt:, api_key:, model: 'dall-e-2', mask: nil, n: 1, size: '1024x1024', **)
@@ -31,7 +39,15 @@ module Legion
             payload[:mask] = Faraday::Multipart::FilePart.new(mask, 'image/png') if mask
 
             response = client(api_key: api_key, **).post('/v1/images/edits', payload)
-            { result: response.body }
+            {
+              result: response.body,
+              usage:  {
+                input_tokens:       0,
+                output_tokens:      0,
+                cache_read_tokens:  0,
+                cache_write_tokens: 0
+              }
+            }
           end
 
           def variation(image:, api_key:, model: 'dall-e-2', n: 1, size: '1024x1024', **)
@@ -43,7 +59,15 @@ module Legion
             }
 
             response = client(api_key: api_key, **).post('/v1/images/variations', payload)
-            { result: response.body }
+            {
+              result: response.body,
+              usage:  {
+                input_tokens:       0,
+                output_tokens:      0,
+                cache_read_tokens:  0,
+                cache_write_tokens: 0
+              }
+            }
           end
 
           include Legion::Extensions::Helpers::Lex if Legion::Extensions.const_defined?(:Helpers, false) &&

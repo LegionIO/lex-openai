@@ -38,5 +38,66 @@ RSpec.describe Legion::Extensions::Openai::Runners::Chat do
       result = test_class.create(model: 'gpt-4o', messages: [], api_key: api_key, temperature: 0.7, max_tokens: 100)
       expect(result[:result]).to eq(response_body)
     end
+
+    it 'includes a usage key in the response' do
+      allow(conn).to receive(:post).and_return(response)
+
+      result = test_class.create(model: 'gpt-4o', messages: [], api_key: api_key)
+      expect(result).to have_key(:usage)
+    end
+
+    it 'returns zero usage when response has no usage data' do
+      allow(conn).to receive(:post).and_return(response)
+
+      result = test_class.create(model: 'gpt-4o', messages: [], api_key: api_key)
+      expect(result[:usage]).to eq(
+        input_tokens:       0,
+        output_tokens:      0,
+        cache_read_tokens:  0,
+        cache_write_tokens: 0
+      )
+    end
+
+    context 'when response includes usage data' do
+      let(:response_body) do
+        {
+          'id'      => 'chatcmpl-123',
+          'choices' => [{ 'message' => { 'content' => 'Hello!' } }],
+          'usage'   => {
+            'prompt_tokens'         => 10,
+            'completion_tokens'     => 25,
+            'prompt_tokens_details' => { 'cached_tokens' => 5 }
+          }
+        }
+      end
+
+      it 'maps prompt_tokens to input_tokens' do
+        allow(conn).to receive(:post).and_return(response)
+
+        result = test_class.create(model: 'gpt-4o', messages: [], api_key: api_key)
+        expect(result[:usage][:input_tokens]).to eq(10)
+      end
+
+      it 'maps completion_tokens to output_tokens' do
+        allow(conn).to receive(:post).and_return(response)
+
+        result = test_class.create(model: 'gpt-4o', messages: [], api_key: api_key)
+        expect(result[:usage][:output_tokens]).to eq(25)
+      end
+
+      it 'maps cached_tokens to cache_read_tokens' do
+        allow(conn).to receive(:post).and_return(response)
+
+        result = test_class.create(model: 'gpt-4o', messages: [], api_key: api_key)
+        expect(result[:usage][:cache_read_tokens]).to eq(5)
+      end
+
+      it 'always returns zero for cache_write_tokens' do
+        allow(conn).to receive(:post).and_return(response)
+
+        result = test_class.create(model: 'gpt-4o', messages: [], api_key: api_key)
+        expect(result[:usage][:cache_write_tokens]).to eq(0)
+      end
+    end
   end
 end

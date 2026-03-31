@@ -15,34 +15,98 @@ RSpec.describe Legion::Extensions::Openai::Runners::Models do
   end
 
   describe '#list' do
+    let(:response_body) { { 'data' => [{ 'id' => 'gpt-4o' }, { 'id' => 'gpt-3.5-turbo' }] } }
+
     it 'lists all models' do
-      body = { 'data' => [{ 'id' => 'gpt-4o' }, { 'id' => 'gpt-3.5-turbo' }] }
-      allow(conn).to receive(:get).with('/v1/models').and_return(instance_double(Faraday::Response, body: body))
+      allow(conn).to receive(:get).with('/v1/models').and_return(instance_double(Faraday::Response, body: response_body))
 
       result = test_class.list(api_key: api_key)
       expect(result[:result]['data'].length).to eq(2)
     end
+
+    it 'includes a usage key in the response' do
+      allow(conn).to receive(:get).with('/v1/models').and_return(instance_double(Faraday::Response, body: response_body))
+
+      result = test_class.list(api_key: api_key)
+      expect(result).to have_key(:usage)
+    end
+
+    it 'returns zero usage values' do
+      allow(conn).to receive(:get).with('/v1/models').and_return(instance_double(Faraday::Response, body: response_body))
+
+      result = test_class.list(api_key: api_key)
+      expect(result[:usage]).to eq(
+        input_tokens:       0,
+        output_tokens:      0,
+        cache_read_tokens:  0,
+        cache_write_tokens: 0
+      )
+    end
   end
 
   describe '#retrieve' do
+    let(:response_body) { { 'id' => 'gpt-4o', 'object' => 'model' } }
+
     it 'retrieves a specific model' do
-      body = { 'id' => 'gpt-4o', 'object' => 'model' }
-      allow(conn).to receive(:get).with('/v1/models/gpt-4o').and_return(instance_double(Faraday::Response, body: body))
+      allow(conn).to receive(:get).with('/v1/models/gpt-4o').and_return(instance_double(Faraday::Response, body: response_body))
 
       result = test_class.retrieve(model: 'gpt-4o', api_key: api_key)
       expect(result[:result]['id']).to eq('gpt-4o')
     end
+
+    it 'includes a usage key in the response' do
+      allow(conn).to receive(:get).with('/v1/models/gpt-4o').and_return(instance_double(Faraday::Response, body: response_body))
+
+      result = test_class.retrieve(model: 'gpt-4o', api_key: api_key)
+      expect(result).to have_key(:usage)
+    end
+
+    it 'returns zero usage values' do
+      allow(conn).to receive(:get).with('/v1/models/gpt-4o').and_return(instance_double(Faraday::Response, body: response_body))
+
+      result = test_class.retrieve(model: 'gpt-4o', api_key: api_key)
+      expect(result[:usage]).to eq(
+        input_tokens:       0,
+        output_tokens:      0,
+        cache_read_tokens:  0,
+        cache_write_tokens: 0
+      )
+    end
   end
 
   describe '#delete' do
+    let(:response_body) { { 'id' => 'ft:gpt-3.5-turbo:org:custom', 'deleted' => true } }
+
     it 'deletes a fine-tuned model' do
-      body = { 'id' => 'ft:gpt-3.5-turbo:org:custom', 'deleted' => true }
       allow(conn).to receive(:delete)
         .with('/v1/models/ft:gpt-3.5-turbo:org:custom')
-        .and_return(instance_double(Faraday::Response, body: body))
+        .and_return(instance_double(Faraday::Response, body: response_body))
 
       result = test_class.delete(model: 'ft:gpt-3.5-turbo:org:custom', api_key: api_key)
       expect(result[:result]['deleted']).to be(true)
+    end
+
+    it 'includes a usage key in the response' do
+      allow(conn).to receive(:delete)
+        .with('/v1/models/ft:gpt-3.5-turbo:org:custom')
+        .and_return(instance_double(Faraday::Response, body: response_body))
+
+      result = test_class.delete(model: 'ft:gpt-3.5-turbo:org:custom', api_key: api_key)
+      expect(result).to have_key(:usage)
+    end
+
+    it 'returns zero usage values' do
+      allow(conn).to receive(:delete)
+        .with('/v1/models/ft:gpt-3.5-turbo:org:custom')
+        .and_return(instance_double(Faraday::Response, body: response_body))
+
+      result = test_class.delete(model: 'ft:gpt-3.5-turbo:org:custom', api_key: api_key)
+      expect(result[:usage]).to eq(
+        input_tokens:       0,
+        output_tokens:      0,
+        cache_read_tokens:  0,
+        cache_write_tokens: 0
+      )
     end
   end
 end
