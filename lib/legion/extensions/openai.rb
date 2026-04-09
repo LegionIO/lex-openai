@@ -9,6 +9,7 @@ require 'legion/extensions/openai/runners/audio'
 require 'legion/extensions/openai/runners/embeddings'
 require 'legion/extensions/openai/runners/files'
 require 'legion/extensions/openai/runners/moderations'
+require 'legion/extensions/openai/identity'
 
 module Legion
   module Extensions
