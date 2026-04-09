@@ -100,7 +100,6 @@ puts image[:result]['data'].first['url']
 
 - `faraday` >= 2.0 - HTTP client
 - `faraday-multipart` >= 1.0 - Multipart file uploads (images, audio, files)
-- `multi_json` - JSON parser abstraction
 
 ## Requirements
 
@@ -113,6 +112,10 @@ puts image[:result]['data'].first['url']
 - `lex-xai` — xAI Grok API (same structural pattern as lex-openai)
 - `legion-llm` — High-level LLM interface including OpenAI via ruby_llm
 - `extensions-ai/CLAUDE.md` — Architecture patterns shared across all AI extensions
+
+## Version
+
+0.1.5
 
 ## License
 
