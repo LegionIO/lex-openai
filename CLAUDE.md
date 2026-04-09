@@ -10,8 +10,8 @@ Legion Extension that connects LegionIO to OpenAI. Provides runners for chat com
 
 **GitHub**: https://github.com/LegionIO/lex-openai
 **License**: MIT
-**Version**: 0.1.2
-**Specs**: 17 examples
+**Version**: 0.1.5
+**Specs**: 66 examples (8 spec files)
 
 ## Architecture
 
@@ -31,15 +31,16 @@ Legion::Extensions::Openai
 
 There is no standalone `Client` class in lex-openai. Runner modules are used directly via `extend` or by including them in a consuming class. This differs from lex-azure-ai, lex-bedrock, lex-claude, lex-foundry, and lex-xai which all ship a `Client` class.
 
-`Helpers::Client` is a **module** (not a class). It does not use `module_function` — instead, runner modules `extend` it so `client(...)` is available as a module-level method. `DEFAULT_BASE_URL` is `'https://api.openai.com'`.
+`Helpers::Client` is a **module** (not a class). Runner modules `extend` it so `client(...)` is available as a module-level method. `DEFAULT_BASE_URL = 'https://api.openai.com'`.
 
 ## Key Design Decisions
 
 - `faraday/multipart` is required unconditionally in `Helpers::Client` — the `:multipart` middleware is always loaded. This is a hard dependency (listed in gemspec), unlike lex-gemini where it is optional.
-- Images (edit, variation) and Audio (transcribe, translate) runners use `Faraday::Multipart::FilePart` directly.
+- `Images#edit` and `Images#variation` use `Faraday::Multipart::FilePart` directly.
 - `Images#generate` uses DALL-E 3 by default; `Images#edit` and `Images#variation` use DALL-E 2 by default.
 - Audio defaults: `model: 'tts-1'`, `voice: 'alloy'`, `response_format: 'mp3'` for speech; `model: 'whisper-1'` for transcription/translation.
-- All runners return `{ result: response.body }` (no `:status` key). This is consistent with lex-gemini runners. lex-claude runners add `:status` to the return hash.
+- All runners return `{ result: response.body }` (no `:status` key).
+- `multi_json` is NOT a declared dependency of lex-openai (unlike lex-azure-ai, lex-claude, lex-foundry, lex-xai). JSON parsing uses Faraday's built-in response middleware.
 - `include Legion::Extensions::Helpers::Lex` is guarded with `Legion::Extensions.const_defined?(:Helpers)` pattern.
 
 ## Dependencies
@@ -48,17 +49,19 @@ There is no standalone `Client` class in lex-openai. Runner modules are used dir
 |-----|---------|
 | `faraday` >= 2.0 | HTTP client |
 | `faraday-multipart` >= 1.0 | Multipart file uploads (images, audio, files) |
+| `legion-cache`, `legion-crypt`, `legion-data`, `legion-json`, `legion-logging`, `legion-settings`, `legion-transport` | LegionIO core |
 
-Note: `multi_json` is NOT a declared dependency of lex-openai (unlike the other extensions in this category). JSON parsing uses Faraday's built-in response middleware.
+Note: `multi_json` is NOT a declared dependency (differs from all other extensions in this category).
 
 ## Testing
 
 ```bash
 bundle install
-bundle exec rspec        # 17 examples
+bundle exec rspec        # 66 examples
 bundle exec rubocop
 ```
 
 ---
 
 **Maintained By**: Matthew Iverson (@Esity)
+**Last Updated**: 2026-04-06
